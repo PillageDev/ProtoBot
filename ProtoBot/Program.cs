@@ -1,10 +1,9 @@
-﻿namespace ProtoBot
-{
-    public class Main
-    {
-        public static void Main(string[] args)
-        {
+﻿namespace ProtoBot;
 
-        }
+public class Main
+{
+    public static void Main(string[] args)
+    {
+
     }
 }
