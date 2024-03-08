@@ -14,11 +14,11 @@ public class Rotation2d
 		this.sin = 0.0;
 	}
 
-        /// <summary>
-        /// Constructs a Rotation2d with the given radian value.
-        /// </summary>
-        /// <param name="value">The value of the angle in radians</param>
-        public Rotation2d(double value)
+    /// <summary>
+    /// Constructs a Rotation2d with the given radian value.
+    /// </summary>
+    /// <param name="value">The value of the angle in radians</param>
+    public Rotation2d(double value)
 	{
 		this.value = value;
 		this.cos = Math.Cos(value);
@@ -79,6 +79,16 @@ public class Rotation2d
 	public double GetRotations()
 	{
 		return Units.RadiansToRotations(value);
+	}
+
+	public double GetCos()
+	{
+		return cos;
+	}
+
+	public double GetSin()
+	{
+		return sin;
 	}
 }
 
