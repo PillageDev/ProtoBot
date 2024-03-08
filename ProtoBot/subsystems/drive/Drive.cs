@@ -1,5 +1,6 @@
 ﻿using System;
 using ProtoBot.utils;
+using ProtoBot.utils.math.kinematics;
 
 namespace ProtoBot.subsystems.drive;
 
@@ -12,15 +13,15 @@ public class Drive: SubsystemBase
     private static readonly double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
 
     public static readonly object OdometryLock = new();
-    // Gyro IO
-    // Gyro Inputs
-    // Module array
+    private readonly IGyroIO gyroIO;
+    private readonly IGyroIO.GyroIOInputs gyroInputs = new();
+    private readonly Module[] modules = new Module[4]; // FL, FR, BL, BR
 
-    // Swerve Kinematics
+    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics();
     // Pose2d
     // Rotation2d
 
-    public Drive(IGyroIO gyro, IModuleIO fl, IModuleIO fr, IModuleIO)
+    public Drive(IGyroIO gyro, IModuleIO fl, IModuleIO fr, IModuleIO bl, IModuleIO br)
     {
         // Init gyro stuff
     }

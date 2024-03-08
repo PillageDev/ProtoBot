@@ -1,6 +1,7 @@
 ﻿using System;
 using ProtoBot.utils;
-using ProtoBot.utils.geometry;
+using ProtoBot.utils.math.geometry;
+using ProtoBot.utils.math.kinematics;
 
 namespace ProtoBot.subsystems.drive;
 
@@ -18,22 +19,22 @@ public class Module
     private double? speedSetpoint = null;
     private Rotation2d? turnRelativeOffset = null;
     private double lastPositionMeters = 0.0;
-    // Swerve module position
+    private SwerveModulePosition[] positionDeltas = Array.Empty<SwerveModulePosition>();
 
     public Module(IModuleIO io, int index)
     {
         this.index = index;
         this.io = io;
 
-        setBrakeMode(true);
+        SetBrakeMode(true);
     }
 
-    public void updateInputs()
+    public void UpdateInputs()
     {
-        io.updateInputs(inputs);
+        io.UpdateInputs(inputs);
     }
 
-    public void periodic()
+    public void Periodic()
     {
         if (angleSetpoint != null)
         {
@@ -41,17 +42,86 @@ public class Module
 
             if (speedSetpoint != null)
             {
-                double angleError = Math.Abs(rotationalDifferenceBetween(inputs.turnPosition, angleSetpoint));
-                double adjustSpeedSetpoint = speedSetpoint * Math.Cos(Units.DegreesToRadians(angleError));
+                double angleError = Math.Abs(RotationalDifferenceBetween(inputs.turnPosition, angleSetpoint));
+                double adjustSpeedSetpoint = (double) (speedSetpoint * Math.Cos(Units.DegreesToRadians(angleError)));
 
                 double velocityRotationsPerSec = adjustSpeedSetpoint / WHEEL_CIRCUMFERENCE;
 
                 io.SetDriveVelocityRPS(velocityRotationsPerSec);
             }
         }
+
+        positionDeltas = new SwerveModulePosition[1];
+        for (int i = 0; i < 1; i++)
+        {
+            double positionMeters = inputs.drivePositionRotations * WHEEL_CIRCUMFERENCE;
+            Rotation2d angle = inputs.turnPosition;
+            positionDeltas[i] = new SwerveModulePosition(positionMeters - lastPositionMeters, angle);
+            lastPositionMeters = positionMeters;
+        }
     }
 
-    public double rotationalDifferenceBetween(Rotation2d a, Rotation2d b)
+    public SwerveModuleState RunSetpoint(SwerveModuleState state)
+    {
+        var optimizedState = SwerveModuleState.Optimize(state, GetAngle());
+
+        angleSetpoint = optimizedState.angle;
+        speedSetpoint = optimizedState.speedMetersPerSecond;
+
+        return optimizedState;
+    }
+
+    public void Stop()
+    {
+        io.SetTurnVoltage(0.0);
+        io.SetDriveVoltage(0.0);
+
+        angleSetpoint = null;
+        speedSetpoint = null;
+    }
+
+    public void SetBrakeMode(bool enable)
+    {
+        io.SetDriveBrakeMode(enable);
+        io.SetTurnBrakeMode(enable);
+    }
+
+    public void SetDriveBrakeMode(bool enable)
+    {
+        io.SetDriveBrakeMode(enable);
+    }
+
+    public Rotation2d GetAngle()
+    {
+        return inputs.turnPosition;
+    }
+
+    public double GetPositionMeters()
+    {
+        return inputs.drivePositionRotations * WHEEL_CIRCUMFERENCE;
+    }
+
+    public double GetVelocityMetersPerSec()
+    {
+        return inputs.driveVelocityRotationsPerSec * WHEEL_CIRCUMFERENCE;
+    }
+
+    public SwerveModulePosition GetPosition()
+    {
+        return new SwerveModulePosition(GetPositionMeters(), GetAngle());
+    }
+
+    public SwerveModuleState GetState()
+    {
+        return new SwerveModuleState(GetVelocityMetersPerSec(), GetAngle());
+    }
+
+    public SwerveModulePosition[] GetPositionDeltas()
+    {
+        return positionDeltas;
+    }
+
+    public double RotationalDifferenceBetween(Rotation2d a, Rotation2d b)
     {
         double aDeg = a.GetDegrees();
         double bDeg = b.GetDegrees();

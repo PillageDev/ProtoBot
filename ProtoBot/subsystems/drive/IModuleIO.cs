@@ -1,5 +1,5 @@
 ﻿using System;
-using ProtoBot.utils.geometry;
+using ProtoBot.utils.math.geometry;
 
 namespace ProtoBot.subsystems.drive;
 

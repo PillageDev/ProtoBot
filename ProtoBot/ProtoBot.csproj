@@ -15,12 +15,16 @@
     <None Remove="subsystems\" />
     <None Remove="subsystems\drive\" />
     <None Remove="utils\" />
-    <None Remove="utils\geometry\" />
+    <None Remove="utils\math\" />
+    <None Remove="utils\math\geometry\" />
+    <None Remove="utils\math\kinematics\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="subsystems\" />
     <Folder Include="subsystems\drive\" />
     <Folder Include="utils\" />
-    <Folder Include="utils\geometry\" />
+    <Folder Include="utils\math\" />
+    <Folder Include="utils\math\geometry\" />
+    <Folder Include="utils\math\kinematics\" />
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@ using CTRE.Phoenix6.Controls;
 using CTRE.Phoenix6.Hardware.Core;
 using CTRE.Phoenix6.Signals;
 using ProtoBot.utils;
-using ProtoBot.utils.geometry;
+using ProtoBot.utils.math.geometry;
 
 namespace ProtoBot.subsystems.drive;
 
