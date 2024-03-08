@@ -11,4 +11,16 @@
     <PackageReference Include="Phoenix6" Version="23.10.0-alpha7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="subsystems\" />
+    <None Remove="subsystems\drive\" />
+    <None Remove="utils\" />
+    <None Remove="utils\geometry\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="subsystems\" />
+    <Folder Include="subsystems\drive\" />
+    <Folder Include="utils\" />
+    <Folder Include="utils\geometry\" />
+  </ItemGroup>
 </Project>
