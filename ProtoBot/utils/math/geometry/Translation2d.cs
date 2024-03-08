@@ -34,5 +34,31 @@ public class Translation2d
 	{
 		return x;
 	}
+
+	public Translation2d Plus(Translation2d other)
+	{
+		return new Translation2d(x + other.x, y + other.y);
+	}
+
+	public Translation2d Minus(Translation2d other)
+	{
+		return new Translation2d(x - other.x, y - other.y);
+	}
+
+	public Translation2d RotateBy(Rotation2d other)
+	{
+		return new Translation2d(
+			x * other.GetCos() - y * other.GetSin(), x * other.GetSin() + y * other.GetCos());
+	}
+
+	public Translation2d Times(double scalar)
+	{
+		return new Translation2d(x * scalar, y * scalar);
+	}
+
+	public Rotation2d GetAngle()
+	{
+		return new Rotation2d(x, y);
+	}
 }
 

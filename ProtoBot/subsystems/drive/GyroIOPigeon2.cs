@@ -12,7 +12,7 @@ public class GyroIOPigeon2: IGyroIO
 
     public GyroIOPigeon2()
     {
-        //TODO: Reset the pigeon
+        // TODO: Reset the pigeon
     }
 
     public void ResetYaw()

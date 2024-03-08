@@ -55,6 +55,11 @@ public class Rotation2d
 		return RotateBy(other.UnaryMinus());
 	}
 
+	public Rotation2d Plus(Rotation2d other)
+	{
+		return RotateBy(other);
+	}
+
 	public Rotation2d RotateBy(Rotation2d other)
 	{
 		return new Rotation2d(
@@ -89,6 +94,11 @@ public class Rotation2d
 	public double GetSin()
 	{
 		return sin;
+	}
+
+	public double GetRadians()
+	{
+		return value;
 	}
 }
 

@@ -61,13 +61,110 @@ public class Drive: SubsystemBase
                 wheelDeltas[moduleIndex] = modules[moduleIndex].GetPositionDeltas()[deltaIndex];
             }
 
-            var twist = kinematics.toTwist2d(wheelDeltas);
+            var twist = kinematics.ToTwist2d(wheelDeltas);
+            if (gyroInputs.connected)
+            {
+                Rotation2d gyroRotation = gyroInputs.yawPosition;
+                twist = new Twist2d(twist.dx, twist.dy, gyroRotation.Minus(lastGyroRotation).GetRadians() / deltaCount);
+            }
+            pose = pose.Exp(twist);
         }
+    }
+
+    public void ResetRotation()
+    {
+        gyroInputs.yawOffset = gyroInputs.realYawPosition;
+        var currentPose = GetPose();
+        SetPose(new Pose2d(currentPose.GetTranslation(), new Rotation2d())); // preserve position but reset rotation
+    }
+
+    public void RunVelocity(ChassisSpeeds speeds)
+    {
+        ChassisSpeeds discreteSpeeds = ChassisSpeeds.Discretize(speeds, 0.02); //0.02 is the can bus frequency, update for canivore
+        SwerveModuleState[] setpointStates = kinematics.ToSwerveModuleStates(discreteSpeeds);
+        SwerveDriveKinematics.DesaturateWheelSpeeds(setpointStates, MAX_LINEAR_SPEED);
+
+        SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
+        for (int i = 0; i < 4; i++)
+        {
+            optimizedStates[i] = modules[i].RunSetpoint(setpointStates[i]);
+        }
+    }
+
+    public void RunFrontWheelDrive(double speedMetersPerSecond, double angle, bool brake, double maxTurningAngle)
+    {
+        SwerveModuleState frontWheels = new SwerveModuleState(speedMetersPerSecond, new Rotation2d(0).Minus(Rotation2d.FromDegrees(angle * maxTurningAngle)));
+        SwerveModuleState backWheels = new SwerveModuleState(speedMetersPerSecond, new Rotation2d(0));
+        SwerveModuleState[] setpointStates =
+        {
+            SwerveModuleState.Optimize(frontWheels, new Rotation2d()),
+            SwerveModuleState.Optimize(frontWheels, new Rotation2d()),
+            SwerveModuleState.Optimize(backWheels, new Rotation2d()),
+            SwerveModuleState.Optimize(backWheels, new Rotation2d())
+        };
+        SwerveDriveKinematics.DesaturateWheelSpeeds(setpointStates, MAX_LINEAR_SPEED);
+
+        SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
+        for (int i = 0; i < 4; i++)
+        {
+            optimizedStates[i] = modules[i].RunSetpoint(setpointStates[i]);
+
+            if (brake)
+            {
+                modules[i].SetDriveBrakeMode(true);
+                continue;
+            }
+
+            modules[i].SetDriveBrakeMode(false);
+        }
+    }
+
+    public void Stop()
+    {
+        RunVelocity(new ChassisSpeeds());
+    }
+
+    public ChassisSpeeds GetChassisSpeeds()
+    {
+        return kinematics.ToChassisSpeeds(modules[0].GetState(), modules[1].GetState(), modules[2].GetState(), modules[3].GetState());
+    }
+
+    public void StopWithX()
+    {
+        Rotation2d[] headings = new Rotation2d[4];
+        for (int i = 0; i < 4; i++)
+        {
+            headings[i] = GetModuleTranslations()[i].GetAngle();
+        }
+        kinematics.ResetHeadings(headings);
+        Stop();
+    }
+
+    // This is an autolog, please log
+    public SwerveModuleState[] GetModuleStates()
+    {
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for (int i = 0; i < 4; i++)
+        {
+            states[i] = modules[i].GetState();
+        }
+        return states;
     }
 
     public override bool End()
     {
         return false;
+    }
+
+    // This is an autolog, please log
+    public Pose2d GetPose()
+    {
+        return pose;
+    }
+
+    public void SetPose(Pose2d pose)
+    {
+        this.pose = pose;
     }
 
     public static Translation2d[] GetModuleTranslations()

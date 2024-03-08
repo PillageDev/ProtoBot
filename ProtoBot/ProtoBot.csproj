@@ -8,24 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="Phoenix6" Version="23.10.0-alpha7" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0"/>
+    <PackageReference Include="Phoenix6" Version="23.10.0-alpha7"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="subsystems\" />
-    <None Remove="subsystems\drive\" />
-    <None Remove="utils\" />
-    <None Remove="utils\math\" />
-    <None Remove="utils\math\geometry\" />
-    <None Remove="utils\math\kinematics\" />
+    <None Remove="subsystems\"/>
+    <None Remove="subsystems\drive\"/>
+    <None Remove="utils\"/>
+    <None Remove="utils\math\"/>
+    <None Remove="utils\math\geometry\"/>
+    <None Remove="utils\math\kinematics\"/>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="subsystems\" />
-    <Folder Include="subsystems\drive\" />
-    <Folder Include="utils\" />
-    <Folder Include="utils\math\" />
-    <Folder Include="utils\math\geometry\" />
-    <Folder Include="utils\math\kinematics\" />
+    <Folder Include="subsystems\"/>
+    <Folder Include="subsystems\drive\"/>
+    <Folder Include="utils\"/>
+    <Folder Include="utils\math\"/>
   </ItemGroup>
 </Project>
