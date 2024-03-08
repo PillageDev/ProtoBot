@@ -31,9 +31,11 @@ namespace ProtoBot.subsystems.drive
 
 		public void SetTurnVoltage(double volts);
 
-		public void SetDriveBrakeMode(bool enabled);
+		public void SetTurnPosition(Rotation2d position);
 
-		public void SetTurnBrakeMode(bool enabled);
+		public void SetDriveBrakeMode(bool enable);
+
+		public void SetTurnBrakeMode(bool enable);
 	}
 }
 

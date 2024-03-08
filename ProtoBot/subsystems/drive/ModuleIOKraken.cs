@@ -3,6 +3,7 @@ using CTRE.Phoenix6;
 using CTRE.Phoenix6.Configs;
 using CTRE.Phoenix6.Controls;
 using CTRE.Phoenix6.Hardware.Core;
+using CTRE.Phoenix6.Signals;
 using ProtoBot.utils;
 using ProtoBot.utils.geometry;
 
@@ -188,12 +189,15 @@ namespace ProtoBot.subsystems.drive
             turnTalon.SetControl(positionVoltageCommand);
         }
 
-        public void SetDriveBrakeMode(bool enabled)
+        public void SetDriveBrakeMode(bool enable)
         {
-            throw new NotImplementedException();
+            MotorOutputConfigs config = new();
+            config.Inverted = Constants.SwerveConstants.driveMotorInvert;
+            config.NeutralMode = enable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+            driveTalon.Configurator.Apply(config);
         }
 
-        public void SetTurnBrakeMode(bool enabled)
+        public void SetTurnBrakeMode(bool enable)
         {
             throw new NotImplementedException();
         }
